@@ -7,21 +7,29 @@
 const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::message.message", ({ strapi }) => ({
-  async find(ctx) {
-    const entities = strapi.entityService.findMany("app::message.message", {
-      sort: { createdAt: "DESC" },
-      limit: ctx.query.limit || 5,
-    });
+    async find(ctx) {
+        // 1
+        const entries = await strapi.entityService.findMany(
+          'api::message.message',
+          {
+            sort: { createdAt: 'DESC' },
+            limit: 5,
+          }
+        );
+      
+        console.log(this, "################## this ######################");
+        // 2
+        const sanitizedEntries = await this.sanitizeOutput(entries, ctx);
+      
+        // 3
+        return this.transformResponse(sanitizedEntries);
+      },
 
-    console.log(this, "################ THIS #####################");
-
-    const sanitizedEntries = await this.sanitizedOutput(entities, ctx);
-    
-    return this.transformResponse(sanitizedEntries);
-
+  async create(ctx) {
+    // todo
   },
 
-  async create(ctx) {},
-
-  async update(ctx) {},
+  async update(ctx) {
+    // todo
+  },
 }));
